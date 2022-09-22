@@ -35,30 +35,33 @@ def getContent(index):
     lines = f.readlines()
     data = lines[index]
 
+def format(vet):
+    #[int(x) for x in vet]
+    for index,x in enumerate(vet):
+        if x == '\n': vet[index] = '10'
+        vet[index] = int(vet[index])
+    return bytearray(vet)
+
+
 def getImage():
     f = open('data.txt')
-    byt = bytearray()
     lines = f.readlines()
     filelist = []
     for index, line in enumerate(lines):
         if line.startswith('START'):
             filename = lines[index + 1].split('\n')[0]
             filedata = lines[index + 2].split(' ')
-            filedata.remove('\n')
-            for x in filedata:
-                byt.append(int(x))
-            image = ImageData(filename, byt)
+            filedataFormated = format(filedata)
+            image = ImageData(filename, filedataFormated)
             filelist.append(image)
     print('\n[FILES SAVED]')
     for index,x in enumerate(filelist):
         print(f'\t{index + 1}){x.name}')
     option = int(input('Choose the number of the file to be recovered: '))
     filerecovered = filelist[option - 1]
-    #img = Image.open(io.BytesIO(filerecovered.content))
-    #img.save(filerecovered.name)
-    #print(f'{filerecovered.name} recovered successfully!')
-    #print(filerecovered.content)
-
+    img = Image.open(io.BytesIO(filerecovered.content))
+    img.save(filerecovered.name)
+    print(f'{filerecovered.name} recovered successfully!')
 
 def main():
     answer = showMenu()
@@ -67,5 +70,3 @@ def main():
         if answer == 2: getImage()
         answer = showMenu()
 main()
-
-
